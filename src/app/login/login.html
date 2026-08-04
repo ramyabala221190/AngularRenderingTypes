@@ -1,0 +1,14 @@
+
+<h4>Login</h4>
+<form [formGroup]="loginForm" (ngSubmit)="login()">
+  <div class="form-floating">
+    <select class="form-select" id="userDropdown" aria-label="Select User" formControlName="user">
+      <option value="0"></option>
+      <option *ngFor="let user of users()" [ngValue]="user">
+        {{ user.firstName }} {{ user.lastName }}
+      </option>
+    </select>
+    <label for="userDropdown">Login As:</label>
+  </div>
+  <button class="btn btn-secondary" type="submit">Login</button>
+</form>

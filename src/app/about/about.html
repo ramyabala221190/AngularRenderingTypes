@@ -1,0 +1,123 @@
+<div class="card row">
+  <div class="card-body">
+    <h5 class="card-title">About ShopLight</h5>
+    <h6 class="card-subtitle mb-2 text-body-secondary">
+      We build delightful product experiences that combine beautiful design, fast performance, and
+      thoughtful service.
+    </h6>
+    <div class="horizontal-container">
+      <div>
+        ShopLight is a lightweight e‑commerce experience built for modern shoppers. We combine clean
+        design with fast performance so customers find, evaluate, and buy products with confidence.
+        Founded by builders who care about speed and usability, ShopLight focuses on practical
+        features that matter: clear product pages, honest pricing, and an enjoyable checkout flow.
+      </div>
+      <p-timeline [value]="events">
+        <ng-template pTemplate="opposite" let-event>
+          <small class="text-surface-500 dark:text-surface-400">{{ event.year }}</small>
+        </ng-template>
+        <ng-template pTemplate="content" let-event>
+          {{ event.description }}
+        </ng-template>
+      </p-timeline>
+    </div>
+  </div>
+</div>
+
+<div class="card row">
+  <div class="card-body">
+    <h5 class="card-title">Mission</h5>
+    <p class="card-text">
+      To make online shopping effortless and trustworthy by delivering fast, accessible experiences
+      that put people first.
+    </p>
+    <ul class="stat-container">
+      <li>
+        <label class="stat-label"><i class="bi bi-box-seam"></i>Products curated </label><span class="badge text-bg-secondary">120 sample SKUs</span>
+      </li>
+      <li>
+        <label  class="stat-label"><i class="bi bi-eye"></i>Monthly visitors (simulated POC)</label
+        ><span class="badge text-bg-secondary">~3,400</span>
+      </li>
+      <li>
+        <label  class="stat-label"><i class="bi bi-hourglass-split"></i>Average page load (prerendered)</label
+        ><span class="badge text-bg-secondary"
+          >~300 ms (LCP-focused)</span>
+      </li>
+      <li><label  class="stat-label"><i class="bi bi-chat-square-text"></i>Customer satisfaction (surveyed testers)</label><span class="badge text-bg-secondary">4.7 / 5 </span></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card row">
+  <div class="card-body">
+    <h5 class="card-title">Vision</h5>
+    <h6 class="card-subtitle mb-2 text-body-secondary">
+      A world where shopping feels fast, personal, and enjoyable on every device.
+    </h6>
+    <p class="card-text"></p>
+    <ul>
+      <li>Customer-first: Design decisions start with real customer needs.</li>
+      <li>Performance matters: Fast, reliable experiences are a feature.</li>
+      <li>Simplicity: Remove friction, not functionality.</li>
+      <li>Transparency: Clear pricing, honest descriptions, respectful data practices.</li>
+      <li>Continuous improvement: ship, learn, and iterate quickly.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card row">
+  <div class="card-body">
+    <h5 class="card-title">What we do</h5>
+    <p class="card-text"></p>
+    <ul>
+      <li>Curate high-quality products with clear photos and descriptions.</li>
+      <li>Deliver blazing-fast pages using modern rendering strategies (SSG/SSR/CSR).</li>
+      <li>Provide a secure, simple checkout and order tracking.</li>
+      <li>Offer responsive support and a human-first returns policy.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card row">
+  <div class="card-body">
+    <h5 class="card-title">Testimonials</h5>
+    <p class="card-text"></p>
+    <ul>
+      <li>
+        “ShopLight’s product pages load instantly — it feels snappy and trustworthy.” — Jaime R.,
+        beta tester
+      </li>
+      <li>
+        “Checkout was easy and clear. I knew exactly what I was buying.” — Lena S., early customer
+      </li>
+      <li>
+        “Their team responded quickly when I had a question — great support.” — Miguel T., tester
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="card row">
+  <div class="card-body">
+    <h5 class="card-title">Careers / Join us</h5>
+    <p class="card-text"></p>
+    We’re a small, focused team building fast web experiences. Interested in front-end performance,
+    UX, or building delightful checkout flows? Email us at <a href="mailto:careers@shoplight.example">careers@shoplight.example</a>
+    with a short note and link to your portfolio.
+  </div>
+</div>
+
+<div class="card row">
+  <div class="card-body">
+    <h5 class="card-title">Let’s talk</h5>
+    <h6 class="card-subtitle mb-2 text-body-secondary">
+      Interested in trying ShopLight or collaborating on POCs? Reach out and we’ll set up a quick
+      demo.
+    </h6>
+    <p class="card-text">
+      <i class="bi bi-envelope-fill"></i> hello@shoplight.example |
+      <i class="bi bi-twitter-x"></i> @shoplight
+    </p>
+  </div>
+</div>

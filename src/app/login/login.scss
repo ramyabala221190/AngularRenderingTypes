@@ -1,0 +1,9 @@
+form{
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+
+    button[type=submit]{
+        align-self: flex-end;
+    }
+}

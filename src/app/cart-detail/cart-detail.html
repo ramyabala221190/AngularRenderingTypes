@@ -1,0 +1,66 @@
+<h4>Your Cart</h4>
+
+<div class="cart-container" *ngIf="carts$|async">
+  <form [formGroup]="cartSelectionForm" class="cart-selection-form">
+    <ng-container formArrayName="selections">
+      <div *ngFor="let cart of cartDetail; let i = index" [formGroupName]="i">
+        <div formArrayName="products" class="products-container">
+          <ng-container *ngFor="let product of productDetails; let j = index">
+            <div class="card" *ngIf="product" [formGroupName]="j">
+              <input type="checkbox" formControlName="selected" />
+              <img class="card-img-top" [src]="product.get('thumbnail')?.value" />
+              <div class="card-body">
+                <h5 class="card-title">{{ product.get('title')?.value }}</h5>
+                <p class="card-text">
+                  <label class="product-label"
+                    ><i class="bi bi-currency-dollar">{{ product.get('price')?.value }}</i></label
+                  >
+                </p>
+                <p class="card-text">
+                  <span class="badge text-bg-info"
+                    ><i class="bi bi-layers"></i>{{ product.get('quantity')?.value }}</span
+                  >
+                </p>
+                <p class="card-text">
+                  <label class="product-label"
+                    ><i class="bi bi-calculator"></i>${{
+                      product.get('total')?.value | roundOff
+                    }}</label
+                  >
+                </p>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </ng-container>
+  </form>
+  <div class="cart-summary">
+    <h4>Cart Summary</h4>
+    <div class="card" *ngIf="cartSummary.length">
+      <div class="card-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of cartSummary">
+              <td>{{ item.title }}</td>
+              <td class="boldLabel italicLabel"><i class="bi bi-currency-dollar"></i>{{ item.price }}</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td class="boldLabel italicLabel"><i class="bi bi-currency-dollar"></i>{{ totalCost }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="alert alert-warning" role="alert" *ngIf="!cartSummary.length">
+      No items selected for checkout
+    </div>
+  </div>
+</div>

@@ -7,10 +7,15 @@ import {
 import express from 'express';
 import { join } from 'node:path';
 
+
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
-const angularApp = new AngularNodeAppEngine();
+const angularApp = new AngularNodeAppEngine(
+  {
+    allowedHosts: ['localhost', '127.0.0.1']
+  }
+);
 
 /**
  * Example Express Rest API endpoints can be defined here.
@@ -39,6 +44,7 @@ app.use(
  * Handle all other requests by rendering the Angular application.
  */
 app.use((req, res, next) => {
+  console.log(`Express server receives request : ${req.url}`);
   angularApp
     .handle(req)
     .then((response) =>
@@ -52,6 +58,7 @@ app.use((req, res, next) => {
  * The server listens on the port defined by the `PORT` environment variable, or defaults to 4000.
  */
 if (isMainModule(import.meta.url) || process.env['pm_id']) {
+  console.log(process.env['PORT'])
   const port = process.env['PORT'] || 4000;
   app.listen(port, (error) => {
     if (error) {

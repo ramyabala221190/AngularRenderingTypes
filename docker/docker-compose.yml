@@ -1,0 +1,19 @@
+services:
+    nginx:
+       image: nginx-app
+       env_file: environments/common.env
+       container_name: nginx-container
+       build:
+         context: .
+         dockerfile: nginx/Dockerfile
+       ports:
+         - 8082:8080
+
+    express:
+       image: express-app
+       container_name: express-container
+       build:
+         context: .
+         dockerfile: docker/Dockerfile
+
+      

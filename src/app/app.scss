@@ -1,0 +1,14 @@
+body{
+    font-size: 12px;
+    width:100%;
+    overflow-y:auto;
+    box-sizing: border-box;
+}
+
+::ng-deep .boldLabel{
+    font-weight: bold;
+}
+
+::ng-deep .italicLabel{
+    font-style: italic;
+}

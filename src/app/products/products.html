@@ -1,0 +1,60 @@
+<ng-template #productContainer let-productDetail="productDetail">
+  <div class="accordion" id="product-{{ productDetail.id }}">
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          [attr.data-bs-toggle]="'collapse'"
+          [attr.data-bs-target]="'#collapse-product-' + productDetail.id"
+          aria-expanded="false"
+          [attr.aria-controls]="'#collapse-product-' + productDetail.id"
+        >
+          <div class="product-brief">
+            <div class="product-title position-relative">
+              <label>{{ productDetail.title }} </label>
+              <span
+                class="position-absolute top-0 translate-middle badge rounded-pill"
+                [ngClass]="productDetail.stock < 10 ? 'bg-danger' : 'bg-success'"
+              >
+                {{ productDetail.stock }} <i class="bi bi-box-seam"></i>
+                <span class="visually-hidden">items in stock</span>
+              </span>
+            </div>
+            <div class="product-tags">
+              <i class="bi bi-tag"></i>
+              <ng-container *ngFor="let tag of productDetail.tags">
+                <span class="badge text-bg-info">{{ tag }}</span>
+              </ng-container>
+            </div>
+            <div class="product-image-container">
+              <div class="product-image" *ngFor="let image of productDetail.images">
+                <img [src]="image" class="img-thumbnail" />
+              </div>
+            </div>
+            <div class="product-price">${{ productDetail.price }}</div>
+          </div>
+        </button>
+      </h2>
+      <div
+        id="collapse-product-{{ productDetail.id }}"
+        class="accordion-collapse collapse"
+        [attr.data-bs-parent]="'#product-' + productDetail.id"
+      >
+        <div class="accordion-body">
+          <div class="product-detail">
+            <div class="product-brand" *ngIf="productDetail.brand"><i class="bi bi-shop"></i> {{ productDetail.brand }}</div>
+            <div class="product-description">{{ productDetail.description }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-container *ngFor="let product of productList().products">
+  <ng-container
+    [ngTemplateOutlet]="productContainer"
+    [ngTemplateOutletContext]="{ productDetail: product }"
+  ></ng-container>
+</ng-container>
