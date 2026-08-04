@@ -272,38 +272,6 @@ Because your app uses SSR (`RenderMode.Server`) and SSG (`RenderMode.Prerender`)
 
 When containerizing an SSR app, your Dockerfile should use a **Node.js runtime image** (not Nginx), because Node is what boots up your Express server.
 
-A standard production `Dockerfile` for your setup looks like this:
-
-```dockerfile
-# Stage 1: Build the app
-FROM node:20-alpine AS builder
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
-
-# Stage 2: Run the Node/Express server
-FROM node:20-alpine AS runner
-WORKDIR /app
-
-# Copy built assets and server files from builder stage
-COPY --from=builder /app/dist /app/dist
-COPY --from=builder /app/package*.json ./
-
-# Install only production dependencies if needed
-RUN npm ci --production
-
-EXPOSE 4000
-ENV PORT=4000
-ENV NODE_ENV=production
-
-# Start the Node Express SSR server
-CMD ["node", "dist/angular-rendering-types/server/server.mjs"]
-
-```
-
----
 
 ### When *Would* You Need Nginx?
 
@@ -311,4 +279,11 @@ You only use Nginx for Angular if your application is **100% Client-Side Rendere
 
 However, because you are using SSR (`RenderMode.Server`), **Node.js (Express) must be inside your container.**
 
-*(Note: In enterprise architectures, developers sometimes place Nginx **in front** of the Node/Express container as a Reverse Proxy/Load Balancer to handle SSL certificates, gzip compression, or DDoS protection, but Node/Express still runs behind it to handle the actual SSR rendering).*
+In enterprise architectures, developers sometimes place Nginx **in front** of the Node/Express container as a Reverse Proxy/Load Balancer to handle SSL certificates, gzip compression, or DDoS protection, but Node/Express still runs behind it to handle the actual SSR rendering.
+In such a scenario you can follow the below flow:
+
+User ----> Nginx(exposed) ---> Express(not exposed to internet) ---> Angular app
+
+ELSE
+
+User ----> Express(exposed to internet) ---> Angular app
