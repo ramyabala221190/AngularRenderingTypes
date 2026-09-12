@@ -287,3 +287,70 @@ User ----> Nginx(exposed) ---> Express(not exposed to internet) ---> Angular app
 ELSE
 
 User ----> Express(exposed to internet) ---> Angular app
+
+# How AOT/JIT work with CSR/SSR/SSG
+
+Ahead-of-Time (AOT) and Just-In-Time (JIT) compilation in Angular define when and where your HTML templates and TypeScript decorators are translated into executable JavaScript that browsers can render.
+
+JIT compilation happens in the browser at runtime. AOT compilation happens during the "ng build" process.
+JIT is used for local development using "ng serve". AOT is used in deployments to higher environments and is not restricted to local run.
+
+Output of JIT compilation will be an index.html (containing just <app-root></app-root>) + JS bundle + static assets. 
+Output of AOT compilation will also be the same with a difference.
+In JIT output, the JS bundle includes the heavy @angular/compiler library which is required to parse and compile templates at runtime
+in the browser. So the bundle size is large.
+In AOT , the JS bundle doesnt include the @angular/compiler library because the compilation is complete at build time and the browser
+doesnt require it. AOT also supports tree shaking so unused pipes, directives,services are stripped and the bundle size is very small.
+In JIT, app errors arec discovered at runtime. Whereas in aot, the errors are found during the build itself.
+
+Why is @angular/compiler required for JIT alone ?
+
+JIT bundles require the @angular/compiler because component templates are left as raw string literals and metadata decorators, whereas AOT bundles replace them entirely with pre-translated JavaScript instruction sets.
+The browser’s JavaScript engine natively understands standard JS and DOM APIs, but it has no built-in logic to parse Angular template syntax ({{name}}, *ngIf, custom attribute bindings) from a raw string. To bridge this gap, the @angular/compiler library must travel inside the bundle to parse those strings, resolve dependencies, and compile them into executable render functions in the browser at runtime.
+
+In an AOT build, the compiler runs ahead of time on your build machine. It strips out all raw template strings and replaces them with low-level, executable JavaScript factory functions and instruction sets.Because the code sent to the browser already consists of raw JavaScript instructions (ɵɵelementStart, ɵɵtextInterpolate1), the browser can execute the rendering logic immediately. The heavyweight @angular/compiler is completely redundant and is safely tree-shaken out of the final production bundles.
+
+SSR and SSG rendering doesnt work with JIT. Both require AOT compilation. 
+
+
+1. With CSR, both JIT and AOT works.
+
+When the user hits the app in the browser. The web server sends the JIT/AOT output:  index.html + JS bundle+ static assets to the browser.
+
+The user’s browser (the "client") must download, parse, and execute all that JavaScript. Only then does the browser build the UI elements and place them on the screen.
+
+Why it feels different: The user often sees a blank screen or a loading spinner while the browser "cooks" the page.
+
+
+2. With SSR,only AOT compilation works.
+
+The JIT/AOT output: index.html + JS bundle+ static assets is sent to Node Express server during deployment.
+When the user hits the app in the browser, the Nodejs express server executes the AOT output to generates the fully completed HTML file.
+
+The Node server sends the finished, ready-to-display HTML to the browser.
+The browser displays the html instantly. 
+Even though the server built the visual version of the page, it cannot make it interactive. The HTML sent by the server is "dead"—buttons don't have click listeners, and dropdowns don't toggle, because the JavaScript that contains those event handlers hasn't been "attached" to the DOM yet.
+When the browser downloads the JavaScript separately, a process called Hydration takes place.
+It is now a fully functional, dynamic Angular application.
+Why it feels different: The user sees the content immediately, even before the JavaScript is fully downloaded or "active."
+
+3. With SSG:
+
+**SSG Build-Time Execution Flow**
+
+In Static Site Generation (SSG), the production server or CDN's only job is to act as a static file host, serving the pre-rendered HTML and compiled JavaScript bundles directly to the browser with zero server-side computation.
+The server simply reads dist/app/browser/index.html off the disk and streams it to the user. Once it arrives, the client-side JavaScript bundles hydrate the static markup to make the page interactive.
+
+During Static Site Generation (SSG), AOT compilation acts as the engine that drives the entire prerendering process before any server or browser touches the code. Angular’s build system uses `@angular/ssr` to execute a multi-phase generation pipeline.
+
+* **Route Discovery and Mapping:** The build process evaluates your router configuration to find all paths marked for prerendering. It inspects static routes or executes dynamic route generation functions configured via routing parameters.
+* **AOT Code Compilation:** Every component, directive, and template is translated into low-level AOT instructions. The runtime compiler is completely stripped out, yielding lean execution bundles.
+* **Node.js & DOM Simulation Bootstrapping:** The build system spins up a temporary Node.js environment featuring a simulated browser DOM. It bootstraps the root application module using the pre-compiled AOT artifacts.
+* **Route-by-Route Execution & Data Hydration:** For each target route, Angular executes component lifecycle hooks and data-fetching logic (such as internal state resolution or API requests). Any external data required must be reachable *during the build*.
+* **HTML Serialization and Disk Output:** Once the component tree resolves into final markup, the engine serializes the rendered DOM into static HTML strings. These files are saved directly to the distribution directory (e.g., `dist/app/browser/shop/index.html`) alongside client-side JavaScript bundles.
+
+**Key Implications of AOT in SSG**
+
+* **Build-Time Dependencies:** Because rendering happens entirely at compile time, APIs or databases queried during component initialization must be online and accessible to your CI/CD build server.
+* **Zero Runtime Server Compute:** AOT pre-rendering shifts all computational overhead from runtime to build time. The final deployment requires only a basic static file server (such as Nginx, AWS S3, or a CDN edge network) rather than an active Node.js backend.
+* **Seamless Hydration:** The generated static HTML embeds specific state transfer data and structural markers, allowing the client-side AOT bundles to take over instantly and hydrate the application upon browser load without layout shifts.
